@@ -1,0 +1,10 @@
+---
+applications:
+- name: demo-spring-security
+  memory: 1G
+  disk_quota: 1G
+  instances: 1
+  host: demo-spring-security
+  domains:
+  - apps.sea.preview.pcf.manulife.com
+  path: target/demo-spring-security-0.0.1.jar
