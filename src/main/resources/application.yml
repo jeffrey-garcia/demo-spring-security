@@ -23,4 +23,5 @@ login:
 # for example, add the Angular website domain to allow cross-origin-request via ajax
 cors:
   allowed:
-    origins: http://localhost:4200, https://demo-angular-app.apps.sea.preview.pcf.manulife.com
+    origins: https://demo-angular-app.apps.sea.preview.pcf.manulife.com
+#    origins: http://localhost:4200
