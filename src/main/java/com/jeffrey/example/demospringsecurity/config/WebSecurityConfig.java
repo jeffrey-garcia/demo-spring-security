@@ -1,26 +1,37 @@
 package com.jeffrey.example.demospringsecurity.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
@@ -31,6 +42,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 @EnableWebSecurity
@@ -46,36 +60,32 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
             .authorizeRequests()
                 .antMatchers(
-                        "/customer**",
-                        "/actuator/**"
+                        "/**"
                 ).access("@authorizationHandler.hasAccess(authentication)")
+                .antMatchers(
+                        "/actuator/**"
+                ).permitAll()
                 .anyRequest().authenticated()
-                .and()
-            .formLogin() // default spring-boot login page
+        .and()
+            .formLogin() // auto redirect default spring login page and won't return 401/403
                 .permitAll()
-                .successHandler(new AuthenticationSuccessHandler() {
-                    @Override
-                    public void onAuthenticationSuccess(
-                            HttpServletRequest httpServletRequest,
-                            HttpServletResponse httpServletResponse,
-                            Authentication authentication) throws IOException, ServletException
-                    {
-                        RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
-                        redirectStrategy.sendRedirect(
-                                httpServletRequest,
-                                httpServletResponse,
-                                securityProperties.loginCompleteRedirectUrl);
-                    }
+                .successHandler((httpServletRequest, httpServletResponse, authentication) -> {
+                    RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+                    redirectStrategy.sendRedirect(
+                            httpServletRequest,
+                            httpServletResponse,
+                            securityProperties.loginCompleteRedirectUrl
+                    );
                 })
-                .and()
+        .and()
             .logout()
                 .permitAll()
-                .and()
+        .and()
             .cors() // enable CORS
-                .and()
+        .and()
             .csrf()
                 // disable csrf for actuator's endpoint (POST/PUT/DELETE) otherwise they will be blocked
-                .ignoringAntMatchers("/actuator/**")
+                .ignoringAntMatchers("/login", "/actuator/**")
                 .csrfTokenRepository(csrfTokenRepository()) // defines a repository where tokens are stored
                 .and()
                 .addFilterAfter(csrfFilter(), CsrfFilter.class); // CSRF filter to add the cookie
@@ -107,11 +117,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 LOGGER.debug("save token url: {}, method: {}", httpServletRequest.getRequestURI(), httpServletRequest.getMethod());
                 LOGGER.debug("save token: {}", csrfToken==null? "":csrfToken.getToken());
+
                 Cookie cookie = new Cookie(CSRF.COOKIE_NAME.toString(), csrfToken==null? "":csrfToken.getToken());
-                cookie.setSecure(true);
 
                 // assign the cookie domain
                 cookie.setDomain(securityProperties.csrfCookiesRootDomain);
+                if (!"localhost".equalsIgnoreCase(securityProperties.csrfCookiesRootDomain)) {
+                    cookie.setSecure(true);
+                }
 
                 if (!StringUtils.isEmpty(repository.getCookiePath())) {
                     cookie.setPath(repository.getCookiePath());
@@ -153,6 +166,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                         // assign the cookie domain
                         cookie.setDomain(securityProperties.csrfCookiesRootDomain);
+                        if (!"localhost".equalsIgnoreCase(securityProperties.csrfCookiesRootDomain)) {
+                            cookie.setSecure(true);
+                        }
 
                         httpServletResponse.addCookie(cookie);
                     }
@@ -184,7 +200,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
             @Override
             public boolean hasAccess(Authentication authentication) {
-                return !disableAllAccess;
+                boolean isAnonymous = (authentication instanceof AnonymousAuthenticationToken);
+                LOGGER.debug("has user authenticated? :{}", !isAnonymous);
+                return (!isAnonymous && !disableAllAccess);
             }
 
             @Override
