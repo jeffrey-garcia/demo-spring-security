@@ -13,6 +13,7 @@ public class WebSessionConfig {
     @Bean
     public CookieSerializer cookieSerializer() {
         DefaultCookieSerializer serializer = new DefaultCookieSerializer();
+
         /**
          * Allow browser to automatically send the session cookie even if
          * request is triggered from different domain
@@ -20,7 +21,7 @@ public class WebSessionConfig {
          *
          * Frontend still couldn't access session cookie via javascript,
          * but this setting instruct browser to send the session cookie
-         * anyway
+         * anyway. So that CSRF protection is required with this relaxation.
          */
         serializer.setSameSite("");
 

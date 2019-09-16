@@ -53,7 +53,9 @@ reads of pages that require this token.
 
 ##### Conclusion
 If your backend service API is going to be accessed by a custom web app through 
-browser, you need CSRF protection definitely.
+browser, you need CSRF protection definitely. And in order to use the Spring Security 
+CSRF protection, we must make sure we use proper HTTP methods for anything that 
+modifies state (PATCH, POST, PUT, and DELETE – not GET).
 
 Read [HERE](https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy) 
 and [HERE](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS)
