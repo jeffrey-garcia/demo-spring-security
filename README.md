@@ -6,6 +6,7 @@ A demo project for CORS negotiation and CSRF protection using Spring Boot Securi
 - [Common misconceptions](#Common-Misconceptions)
 - [Solution](#Solution)
 - [Build, Run, Test](#Build-Run-Test)
+- [Debug-Locally](#Debug-Locally)
 - [References](#references)
 
 <br/>
@@ -151,8 +152,10 @@ the browser's console for details.
 
 ### <a name="Solution"></a> Solution
 - Enable CORS to enforce cross-origins read/write/form-post only for allowed domain
-- Enable login session using spring-session and Redis to allow scaling
 - Enable CRSF token for root/sub-domains 
+- Enable login session using spring-session and Redis to allow scaling
+  (by default the CSRF token is stored inside the HTTP session, and the
+  HTTP session is replicated over all the backend instances)
 
 <br/>
 
@@ -162,6 +165,29 @@ the browser's console for details.
     ```sh
     ./mvnw clean spring-boot:run
     ```
+<br/>
+
+### <a name="Debug-Locally"></a> Debugging Spring-Session Locally
+#### Install Redis
+To develop/debug locally, install Redis.
+
+On a Mac with homebrew:
+```sh        
+brew install redis
+```
+Once completed, launch it with default settings.
+```sh
+redis-server
+``` 
+
+<br/>
+
+#### Remove all sessions by using redis-cli
+On a Mac computer
+```sh
+redis-cli keys '*' | xargs redis-cli del
+```
+
 <br/>
 
 ### <a name="references"></a> References
