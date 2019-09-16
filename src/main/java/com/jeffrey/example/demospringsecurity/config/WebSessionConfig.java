@@ -1,5 +1,7 @@
 package com.jeffrey.example.demospringsecurity.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
@@ -9,6 +11,10 @@ import org.springframework.session.web.http.DefaultCookieSerializer;
 @EnableRedisHttpSession
 @Configuration
 public class WebSessionConfig {
+
+    @Autowired
+    @Qualifier("webSecurityProperties")
+    SecurityProperties securityProperties;
 
     @Bean
     public CookieSerializer cookieSerializer() {
@@ -24,6 +30,9 @@ public class WebSessionConfig {
          * anyway. So that CSRF protection is required with this relaxation.
          */
         serializer.setSameSite("");
+
+        // configure the session cookie timeout in seconds
+        serializer.setCookieMaxAge(securityProperties.loginSessionCookieTimeout);
 
         // all other settings remain as default
 

@@ -13,6 +13,9 @@ login:
     redirect:
 #      url: https://demo-angular-app.apps.sea.preview.pcf.manulife.com
       url: http://localhost:4200
+  session:
+    cookie:
+      timeout: 60
 
 # Custom configuration for configuring list of CORS allowed origins
 # for example, add the Angular website domain to allow cross-origin-request via ajax
