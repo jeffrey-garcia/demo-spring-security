@@ -1,37 +1,26 @@
 package com.jeffrey.example.demospringsecurity.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
-import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
@@ -42,9 +31,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
 
 @Configuration
 @EnableWebSecurity
@@ -122,7 +108,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 // assign the cookie domain
                 cookie.setDomain(securityProperties.csrfCookiesRootDomain);
-                if (!"localhost".equalsIgnoreCase(securityProperties.csrfCookiesRootDomain)) {
+                if (!"localhost".equalsIgnoreCase(securityProperties.csrfCookiesRootDomain))
+                {
                     cookie.setSecure(true);
                 }
 
@@ -161,15 +148,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                     if (cookie == null || token != null && !token.equals(cookie.getValue())) {
                         cookie = new Cookie(CSRF.COOKIE_NAME.toString(), token);
-                        cookie.setPath("/");
-                        cookie.setHttpOnly(false);
 
                         // assign the cookie domain
                         cookie.setDomain(securityProperties.csrfCookiesRootDomain);
-                        if (!"localhost".equalsIgnoreCase(securityProperties.csrfCookiesRootDomain)) {
+                        if (!"localhost".equalsIgnoreCase(securityProperties.csrfCookiesRootDomain))
+                        {
                             cookie.setSecure(true);
                         }
 
+                        cookie.setPath("/");
+                        cookie.setHttpOnly(false);
                         httpServletResponse.addCookie(cookie);
                     }
                 }

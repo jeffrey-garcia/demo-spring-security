@@ -4,6 +4,7 @@ A demo project for CORS negotiation and CSRF protection using Spring Boot Securi
 
 <b>Table of Contents:</b>
 - [Common misconceptions](#Common-Misconceptions)
+- [Solution](#Solution)
 - [Build, Run, Test](#Build-Run-Test)
 - [References](#references)
 
@@ -19,8 +20,8 @@ This means that a web application making AJAX call can only request resources
 from the same origin the application was loaded from, unless the response from 
 other origins includes the right CORS headers.
 
-However, following 2 categories of cross-origins request are allowed:
-- cross-origins writes request in the forms of: links, redirects, and form submissions
+However, following 2 categories of cross-origins requests are allowed:
+- cross-origins writes request in the forms of: links, redirects, and http form submissions
 - cross-origins embedding resources, such as:
     - JavaScript with `<script src="…"></script>`
     - CSS applied with `<link rel="stylesheet" href="…">`
@@ -147,6 +148,13 @@ occurred. The only way to determine what specifically went wrong is to look at
 the browser's console for details.
 
 <br/> 
+
+### <a name="Solution"></a> Solution
+- Enable CORS to enforce cross-origins read/write/form-post only for allowed domain
+- Enable login session using spring-session and Redis to allow scaling
+- Enable CRSF token for root/sub-domains 
+
+<br/>
 
 ### <a name="Build-Run-Test"></a> Build, Run & Test
 #### Running app standalone locally
