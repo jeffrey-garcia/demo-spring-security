@@ -49,13 +49,14 @@ To prevent `cross-origin writes`, check an unguessable token in the request:
 known as a Cross-Site Request Forgery (CSRF) token, and you must prevent cross-origin 
 reads of pages that require this token.
 
-<br/>
+CSRF attacks are possible against web apps that use cookie-based authentication 
+because:
+- Browsers store cookies issued by a web app.
+- Stored cookies include session cookies for authenticated users.
+- Browsers send all of the cookies associated with a domain to the web app 
+every request regardless of how the request to app was generated within the 
+browser.
 
-##### Conclusion
-If your backend service API is going to be accessed by a custom web app through 
-browser, you need CSRF protection definitely. And in order to use the Spring Security 
-CSRF protection, we must make sure we use proper HTTP methods for anything that 
-modifies state (PATCH, POST, PUT, and DELETE – not GET).
 
 Read [HERE](https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy) 
 and [HERE](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS)
@@ -63,29 +64,75 @@ and [HERE](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_For
 
 <br/>
 
-#### What if all the backend API is secured by requiring an OAuth token?
-This doesn't change the fact that cross-origin write and read still reach 
-the server, it only differs in that way that now the server will validate 
-the OAuth token before touching any data.
+#### What if all the backend API is secured by requiring an OAuth token instead of session cookie?
 
-When it comes to authentication using OAuth 2.0 for a typical single-page-app 
-(such as Angular which leverage on client-side technology), the OAuth access 
-token/refresh token `must be` stored somewhere in the client device inevitably, 
-so that once the user authenticates himself by providing login credentials, 
-he doesn't need to provide his credentials again to navigate through the 
-website. Either in browser local storage, session storage or cookies.
+##### Cookie-based authentication
+When a user authenticates using their username and password, they're 
+issued a token, containing an authentication ticket that can be used 
+for authentication and authorization. The token is stored as a cookie 
+that accompanies every request the client makes. 
 
-So this boils down to the next question.
+If your backend service API is using cookie-based authentication and is  
+going to be accessed by a custom web app through browser, you need CSRF 
+protection definitely. And in order to use the Spring Security CSRF protection, 
+we must make sure we use proper HTTP methods for anything that modifies 
+state (PATCH, POST, PUT, and DELETE – not GET).
+
+Common ways to steal cookies include Social Engineering or exploiting an XSS 
+vulnerability in the application. Although `HttpOnly` cookie attribute can help to 
+mitigate this attack by preventing access to cookie value through JavaScript 
+(together with `Secure` attribute that enforces the cookie is only sent via HTTPS),
+the real problem is that browser by-design automatically send all previous stored 
+cookies with every request it made to the server in same origin, and that's why usage 
+of cookies in web app is vulnerable to CSRF attack.
+
+Read [HERE](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies)
+and [HERE](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html)
+
+<br/>
+
+##### Token-based authentication
+When it comes to token-based authentication, the token `must be` stored 
+somewhere in the client device. When a user attempts to access a resource 
+requiring authentication, the token is sent to the server with an additional 
+authorization header in form of Bearer token. This makes the app stateless. 
+To send the token on subsequent requests, store the token in the browser's 
+local storage. 
+
+Don't be concerned about CSRF vulnerability if the token is stored in the 
+browser's local storage. CSRF is a concern when the token is stored in a 
+cookie.
+
+However, this boils down to the next question.
 
 <br/> 
 
-#### Are there any safe places to store the OAuth token
-##### Web Browser Storage
+#### Are Web Browser Storage safe place to store the authentication token
 Any data stored there is accessible through JavaScript on the same domain. 
 This means that any JavaScript running on your site will have access to web 
 storage, and because of this can be vulnerable to cross-site scripting (XSS) 
 attacks. 
 
+##### Secutiry Threat
+- any authentication your app requires can be bypassed by a user with local 
+privileges to the machine on which the data is stored. Therefore, it's 
+recommended not to store any sensitive information in local storage.
+
+- Use the object sessionStorage instead of localStorage if persistent storage 
+is not needed. sessionStorage object is available only to that window/tab 
+until the window is closed.
+
+- A single Cross Site Scripting can be used to steal all the data in these 
+objects, so again it's recommended not to store sensitive information in 
+local storage.
+
+- A single Cross Site Scripting can be used to load malicious data into 
+these objects too, so don't consider objects in these to be trusted.
+
+- Do not store session identifiers in local storage as the data is always 
+accesible by JavaScript. 
+
+##### Types of attack
 Such attack can be materialized in following ways:
 - Modern web apps include 3rd party massive numbers of JavaScript libraries, 
 package managers like `npm` imports other peoples’ code into web apps. The 
@@ -105,24 +152,6 @@ sensitive information.
  
 Read [HERE](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/JSON_Web_Token_Cheat_Sheet_for_Java.md#token-sidejacking)
 and [HERE](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/HTML5_Security_Cheat_Sheet.md#local-storage)
-
-<br/>
-
-##### Cookies
-Whereas cookies are often used in web application to identify a user and their 
-authenticated session, so stealing a cookie can lead to hijacking the authenticated 
-user's session. 
-
-Common ways to steal cookies include Social Engineering or exploiting an XSS 
-vulnerability in the application. Although `HttpOnly` cookie attribute can help to 
-mitigate this attack by preventing access to cookie value through JavaScript 
-(together with `Secure` attribute that enforces the cookie is only sent via HTTPS),
-the real problem is that browser by-design automatically send all previous stored 
-cookies with every request it made to the server in same origin, and that's why usage 
-of cookies in web app is vulnerable to CSRF attack.
-
-Read [HERE](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies)
-and [HERE](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html)
 
 <br/>
 
@@ -193,6 +222,7 @@ redis-cli keys '*' | xargs redis-cli del
 <br/>
 
 ### <a name="references"></a> References
+- [Cross-Site Scripting Prevention](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html)
 - [Cross-Origin Resource Sharing (CORS)](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS)
 - [Cross-Site Request Forgery](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.md)
 - [Prevent Cross-Site Request Forgery (XSRF/CSRF)](https://docs.microsoft.com/en-us/aspnet/core/security/anti-request-forgery?view=aspnetcore-2.2)
