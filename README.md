@@ -182,13 +182,49 @@ the browser's console for details.
 <br/> 
 
 ### <a name="Solution"></a> Solution
+- Rely on SOP to provide the default cross-origin access policy in browser
 - Enable CORS to enforce cross-origins read/write/form-post only for allowed domain
-- Enable CRSF token for root/sub-domains 
-- Enable login session using spring-session and Redis to allow scaling
+- Enable CSRF token for root/sub-domains 
+- Enable login session using spring-session and Redis to facilitate horizontal scaling
   (by default the CSRF token is stored inside the HTTP session, and the
   HTTP session is replicated over all the backend instances)
 
 <br/>
+
+#### Exepcted Behavior
+
+##### HTTP GET
+| Scenario | SOP | SOP + CORS | SOP + CORS + Session | SOP + CORS + Session + CSRF |
+| :--- | :--- | :--- | :--- | :--- | 
+| same origin request | Success | NA | NA | NA |
+| cross-origins request (not allowed in CORS policy) | Fail | Fail | NA | NA |
+| cross-origins request (allowed in CORS policy) | Fail | Success | NA | NA |
+| cross-origins request (allowed in CORS policy) without authentication | Fail | Fail | Fail | NA |
+| cross-origins request (allowed in CORS policy) with authentication | Fail | Fail | Success | NA |
+| cross-origins request (allowed in CORS policy) with authentication but no CSRF token | Fail | Fail | Fail | Fail |
+| cross-origins request (allowed in CORS policy) with authentication and CSRF token | Fail | Fail | Fail | Success |
+
+##### HTTP POST
+| Scenario | SOP | SOP + CORS | SOP + CORS + Session | SOP + CORS + Session + CSRF |
+| :--- | :--- | :--- | :--- | :--- | 
+| same origin request | Success | NA | NA | NA |
+| cross-origins request (not allowed in CORS policy) | Fail | Fail | NA | NA |
+| cross-origins request (allowed in CORS policy) | Fail | Success | NA | NA |
+| cross-origins request (allowed in CORS policy) without authentication | Fail | Fail | Fail | NA |
+| cross-origins request (allowed in CORS policy) with authentication | Fail | Fail | Success | NA |
+| cross-origins request (allowed in CORS policy) with authentication but no CSRF token | Fail | Fail | Fail | Fail |
+| cross-origins request (allowed in CORS policy) with authentication and CSRF token | Fail | Fail | Fail | Success |
+
+##### HTTP FROM POST
+| Scenario | SOP | SOP + CORS | SOP + CORS + Session | SOP + CORS + Session + CSRF |
+| :--- | :--- | :--- | :--- | :--- | 
+| same origin request | Success | NA | NA | NA |
+| cross-origins request (not allowed in CORS policy) | Success | Fail | NA | NA |
+| cross-origins request (allowed in CORS policy) | Fail | Success | NA | NA |
+| cross-origins request (allowed in CORS policy) without authentication | Fail | Fail | Fail | NA |
+| cross-origins request (allowed in CORS policy) with authentication | Fail | Fail | Success | NA |
+| cross-origins request (allowed in CORS policy) with authentication but no CSRF token | Fail | Fail | Fail | Fail |
+| cross-origins request (allowed in CORS policy) with authentication and CSRF token | Fail | Fail | Fail | Success |
 
 ### <a name="Build-Run-Test"></a> Build, Run & Test
 #### Running app standalone locally
