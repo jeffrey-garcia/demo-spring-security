@@ -195,7 +195,7 @@ the browser's console for details.
 The following tables illustrate the comparison matrix for various combination of protection technique.
 
 ##### HTTP GET
-| Scenario | <li>SOP</li> | <li>SOP</li><li>CORS Policy</li> | <li>SOP</li><li>CORS Policy</li><li>Session</li> | <li>SOP</li><li>CORS Policy</li><li>Session</li><li>CSRF</li> |
+| Scenario | SOP | SOP<br/>CORS Policy | SOP<br/>CORS Policy<br/>Session | SOP<br/>CORS Policy<br/>Session<br/>CSRF |
 | :--- | :--- | :--- | :--- | :--- | 
 | same origin request | Success | Success |  |  |
 | cross-origins request | Fail* | Fail* |  |  |
@@ -208,7 +208,7 @@ The following tables illustrate the comparison matrix for various combination of
 `*` Declined by CORS policy
 
 ##### HTTP POST
-| Scenario | <li>SOP</li> | <li>SOP</li><li>CORS Policy</li> | <li>SOP</li><li>CORS Policy</li><li>Session</li> | <li>SOP</li><li>CORS Policy</li><li>Session</li><li>CSRF</li> |
+| Scenario | SOP | SOP<br/>CORS Policy | SOP<br/>CORS Policy<br/>Session | SOP<br/>CORS Policy<br/>Session<br/>CSRF |
 | :--- | :--- | :--- | :--- | :--- | 
 | same origin request | Success | Success |  |  |
 | cross-origins request | Fail* | Fail* |  |  |
@@ -221,7 +221,7 @@ The following tables illustrate the comparison matrix for various combination of
 `*` Declined by CORS policy
 
 ##### HTTP FROM POST
-| Scenario | <li>SOP</li> | <li>SOP</li><li>CORS Policy</li> | <li>SOP</li><li>CORS Policy</li><li>Session</li> | <li>SOP</li><li>CORS Policy</li><li>Session</li><li>CSRF</li> |
+| Scenario | SOP | SOP<br/>CORS Policy | SOP<br/>CORS Policy<br/>Session | SOP<br/>CORS Policy<br/>Session<br/>CSRF |
 | :--- | :--- | :--- | :--- | :--- | 
 | same origin request | Success | Success |  |  |
 | cross-origins request | <font color='red'>Success</font> | Fail* |  |  |
