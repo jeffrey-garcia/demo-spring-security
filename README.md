@@ -195,7 +195,7 @@ the browser's console for details.
 The following tables illustrate the comparison matrix for various combination of protection technique.
 
 ##### HTTP GET
-| Scenario | SOP [x]<br/>CORS [ ]<br/>Session [ ]<br/>CSRF [ ] | SOP [x]<br/>CORS [x]<br/>Session [ ]<br/>CSRF [ ] | SOP [x]<br/>CORS [x]<br/>Session [x]<br/>CSRF [ ] | SOP [x]<br/>CORS [x]<br/>Session [x]<br/>CSRF [x] |
+| Scenario | SOP | SOP<br/>CORS | SOP<br/>CORS<br/>Session<br/> | SOP<br/>CORS<br/>Session<br/>CSRF |
 | :--- | :--- | :--- | :--- | :--- | 
 | same origin request | Success | Success |  |  |
 | cross-origins request | Fail* | Fail* |  |  |
