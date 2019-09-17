@@ -197,39 +197,39 @@ The following tables illustrate the comparison matrix for various combination of
 ##### HTTP GET
 | Scenario | SOP | SOP<br/>CORS | SOP<br/>CORS<br/>Session<br/> | SOP<br/>CORS<br/>Session<br/>CSRF |
 | :--- | :--- | :--- | :--- | :--- | 
-| same origin request | Success | Success |  |  |
-| cross-origins request | Fail* | Fail* |  |  |
-| cross-origins request <br/> (allowed in CORS policy) |  | Success |  |  |
-| cross-origins request with authentication |  |  | Fail* |  |
-| cross-origins request with authentication <br/> (allowed in CORS policy) |  |  | Success |  |
-| cross-origins request with authentication and CSRF token |  |  |  | Fail* |
-| cross-origins request with authentication and CSRF token <br/> (allowed in CORS policy)  |  |  |  | Success |
+| same origin request | Accepted | Accepted |  |  |
+| cross-origins request | Declined `*` | Declined `*` |  |  |
+| cross-origins request <br/> `(allowed in CORS policy)` |  | Accepted |  |  |
+| cross-origins request with authentication |  |  | Declined `*` |  |
+| cross-origins request with authentication <br/> `(allowed in CORS policy)` |  |  | Accepted |  |
+| cross-origins request with authentication and CSRF token |  |  |  | Declined `*` |
+| cross-origins request with authentication and CSRF token <br/> `(allowed in CORS policy)`  |  |  |  | Accepted |
 
 `*` Declined by CORS policy
 
 ##### HTTP POST
-| Scenario | SOP | SOP<br/>CORS Policy | SOP<br/>CORS Policy<br/>Session | SOP<br/>CORS Policy<br/>Session<br/>CSRF |
+| Scenario | SOP | SOP<br/>CORS | SOP<br/>CORS<br/>Session<br/> | SOP<br/>CORS<br/>Session<br/>CSRF |
 | :--- | :--- | :--- | :--- | :--- | 
-| same origin request | Success | Success |  |  |
-| cross-origins request | Fail* | Fail* |  |  |
-| cross-origins request <br/> (allowed in CORS policy) |  | Success |  |  |
-| cross-origins request with authentication |  |  | Fail* |  |
-| cross-origins request with authentication <br/> (allowed in CORS policy) |  |  | Success |  |
-| cross-origins request with authentication and CSRF token |  |  |  | Fail* |
-| cross-origins request with authentication and CSRF token <br/> (allowed in CORS policy)  |  |  |  | Success |
+| same origin request | Accepted | Accepted |  |  |
+| cross-origins request | Declined `*` | Declined `*` |  |  |
+| cross-origins request <br/> `(allowed in CORS policy)` |  | Accepted |  |  |
+| cross-origins request with authentication |  |  | Declined `*` |  |
+| cross-origins request with authentication <br/> `(allowed in CORS policy)` |  |  | Accepted |  |
+| cross-origins request with authentication and CSRF token |  |  |  | Declined `*` |
+| cross-origins request with authentication and CSRF token <br/> `(allowed in CORS policy)`  |  |  |  | Accepted |
 
 `*` Declined by CORS policy
 
 ##### HTTP FROM POST
-| Scenario | SOP | SOP<br/>CORS Policy | SOP<br/>CORS Policy<br/>Session | SOP<br/>CORS Policy<br/>Session<br/>CSRF |
+| Scenario | SOP | SOP<br/>CORS | SOP<br/>CORS<br/>Session<br/> | SOP<br/>CORS<br/>Session<br/>CSRF |
 | :--- | :--- | :--- | :--- | :--- | 
-| same origin request | Success | Success |  |  |
-| cross-origins request | <font color='red'>Success</font> | Fail* |  |  |
-| cross-origins request <br/> (allowed in CORS policy) |  | Success |  |  |
-| cross-origins request with authentication |  |  | Fail* |  |
-| cross-origins request with authentication <br/> (allowed in CORS policy) |  |  | Success |  |
-| cross-origins request with authentication and CSRF token |  |  |  | Fail* |
-| cross-origins request with authentication and CSRF token <br/> (allowed in CORS policy)  |  |  |  | Success |
+| same origin request | Accepted | Accepted |  |  |
+| cross-origins request | <font color='red'>Accepted</font> | Declined `*` |  |  |
+| cross-origins request <br/> `(allowed in CORS policy)` |  | Accepted |  |  |
+| cross-origins request with authentication |  |  | Declined `*` |  |
+| cross-origins request with authentication <br/> `(allowed in CORS policy)` |  |  | Accepted |  |
+| cross-origins request with authentication and CSRF token |  |  |  | Declined `*` |
+| cross-origins request with authentication and CSRF token <br/> `(allowed in CORS policy)`  |  |  |  | Accepted |
 
 `*` Declined by CORS policy
 
