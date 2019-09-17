@@ -192,39 +192,52 @@ the browser's console for details.
 <br/>
 
 #### Exepcted Behavior
+The following tables illustrate the comparison matrix for various combination of protection technique.
 
 ##### HTTP GET
-| Scenario | SOP | SOP + CORS | SOP + CORS + Session | SOP + CORS + Session + CSRF |
+| Scenario | <li>SOP</li> | <li>SOP</li><li>CORS Policy</li> | <li>SOP</li><li>CORS Policy</li><li>Session</li> | <li>SOP</li><li>CORS Policy</li><li>Session</li><li>CSRF</li> |
 | :--- | :--- | :--- | :--- | :--- | 
-| same origin request | Success | NA | NA | NA |
-| cross-origins request (not allowed in CORS policy) | Fail | Fail | NA | NA |
-| cross-origins request (allowed in CORS policy) | Fail | Success | NA | NA |
-| cross-origins request (allowed in CORS policy) without authentication | Fail | Fail | Fail | NA |
-| cross-origins request (allowed in CORS policy) with authentication | Fail | Fail | Success | NA |
-| cross-origins request (allowed in CORS policy) with authentication but no CSRF token | Fail | Fail | Fail | Fail |
-| cross-origins request (allowed in CORS policy) with authentication and CSRF token | Fail | Fail | Fail | Success |
+| same origin request | Success | Success |  |  |
+| cross-origins request | Fail* | Fail* |  |  |
+| cross-origins request <br/> (allowed in CORS policy) |  | Success |  |  |
+| cross-origins request with authentication |  |  | Fail* |  |
+| cross-origins request with authentication <br/> (allowed in CORS policy) |  |  | Success |  |
+| cross-origins request with authentication and CSRF token |  |  |  | Fail* |
+| cross-origins request with authentication and CSRF token <br/> (allowed in CORS policy)  |  |  |  | Success |
+
+`*` Declined by CORS policy
 
 ##### HTTP POST
-| Scenario | SOP | SOP + CORS | SOP + CORS + Session | SOP + CORS + Session + CSRF |
+| Scenario | <li>SOP</li> | <li>SOP</li><li>CORS Policy</li> | <li>SOP</li><li>CORS Policy</li><li>Session</li> | <li>SOP</li><li>CORS Policy</li><li>Session</li><li>CSRF</li> |
 | :--- | :--- | :--- | :--- | :--- | 
-| same origin request | Success | NA | NA | NA |
-| cross-origins request (not allowed in CORS policy) | Fail | Fail | NA | NA |
-| cross-origins request (allowed in CORS policy) | Fail | Success | NA | NA |
-| cross-origins request (allowed in CORS policy) without authentication | Fail | Fail | Fail | NA |
-| cross-origins request (allowed in CORS policy) with authentication | Fail | Fail | Success | NA |
-| cross-origins request (allowed in CORS policy) with authentication but no CSRF token | Fail | Fail | Fail | Fail |
-| cross-origins request (allowed in CORS policy) with authentication and CSRF token | Fail | Fail | Fail | Success |
+| same origin request | Success | Success |  |  |
+| cross-origins request | Fail* | Fail* |  |  |
+| cross-origins request <br/> (allowed in CORS policy) |  | Success |  |  |
+| cross-origins request with authentication |  |  | Fail* |  |
+| cross-origins request with authentication <br/> (allowed in CORS policy) |  |  | Success |  |
+| cross-origins request with authentication and CSRF token |  |  |  | Fail* |
+| cross-origins request with authentication and CSRF token <br/> (allowed in CORS policy)  |  |  |  | Success |
+
+`*` Declined by CORS policy
 
 ##### HTTP FROM POST
-| Scenario | SOP | SOP + CORS | SOP + CORS + Session | SOP + CORS + Session + CSRF |
+| Scenario | <li>SOP</li> | <li>SOP</li><li>CORS Policy</li> | <li>SOP</li><li>CORS Policy</li><li>Session</li> | <li>SOP</li><li>CORS Policy</li><li>Session</li><li>CSRF</li> |
 | :--- | :--- | :--- | :--- | :--- | 
-| same origin request | Success | NA | NA | NA |
-| cross-origins request (not allowed in CORS policy) | Success | Fail | NA | NA |
-| cross-origins request (allowed in CORS policy) | Fail | Success | NA | NA |
-| cross-origins request (allowed in CORS policy) without authentication | Fail | Fail | Fail | NA |
-| cross-origins request (allowed in CORS policy) with authentication | Fail | Fail | Success | NA |
-| cross-origins request (allowed in CORS policy) with authentication but no CSRF token | Fail | Fail | Fail | Fail |
-| cross-origins request (allowed in CORS policy) with authentication and CSRF token | Fail | Fail | Fail | Success |
+| same origin request | Success | Success |  |  |
+| cross-origins request | <font color='red'>Success</font> | Fail* |  |  |
+| cross-origins request <br/> (allowed in CORS policy) |  | Success |  |  |
+| cross-origins request with authentication |  |  | Fail* |  |
+| cross-origins request with authentication <br/> (allowed in CORS policy) |  |  | Success |  |
+| cross-origins request with authentication and CSRF token |  |  |  | Fail* |
+| cross-origins request with authentication and CSRF token <br/> (allowed in CORS policy)  |  |  |  | Success |
+
+`*` Declined by CORS policy
+
+This proves that hardening of CORS policy to tighten the acceptance of cross-origins requests from 
+legitimate domain/host is the first-line of defense to effectively block CSRF attack, regardless if 
+CSRF token exist.
+
+<br/>
 
 ### <a name="Build-Run-Test"></a> Build, Run & Test
 #### Running app standalone locally
