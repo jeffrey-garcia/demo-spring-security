@@ -17,11 +17,20 @@
 
 	<properties>
 		<java.version>1.8</java.version>
+		<pivotal-spring-cloud-services.version>2.1.4.RELEASE</pivotal-spring-cloud-services.version>
 		<spring-cloud.version>Greenwich.SR2</spring-cloud.version>
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>io.pivotal.spring.cloud</groupId>
+				<artifactId>spring-cloud-services-dependencies</artifactId>
+				<version>${pivotal-spring-cloud-services.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
@@ -45,14 +54,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -69,11 +76,10 @@
 			<artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency>
 
+		<!-- in memory database to simulate a persistent data store for entity state -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<scope>runtime</scope>
-			<optional>true</optional>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 
 		<dependency>
@@ -81,9 +87,17 @@
 			<artifactId>h2</artifactId>
 		</dependency>
 
+		<!-- for supporting dynamic update of beans configuration via refresh scope -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-config</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
 		</dependency>
 
 		<dependency>
@@ -99,11 +113,89 @@
 		</dependency>
 	</dependencies>
 
+	<profiles>
+		<profile>
+			<id>local</id>
+			<activation>
+				<!-- default to dev environment if not specified -->
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<dependencies>
+				<!-- specific dependencies for dev environment -->
+			</dependencies>
+			<build>
+				<resources>
+					<resource>
+						<directory>src/main/resources/local</directory>
+					</resource>
+				</resources>
+				<finalName>${project.artifactId}-local-${project.version}</finalName>
+			</build>
+		</profile>
+
+		<profile>
+			<id>pcf</id>
+			<dependencies>
+				<!-- dependency for config service instance service on Cloud (PCF) -->
+				<dependency>
+					<groupId>io.pivotal.spring.cloud</groupId>
+					<artifactId>spring-cloud-services-starter-config-client</artifactId>
+				</dependency>
+			</dependencies>
+			<build>
+				<resources>
+					<resource>
+						<directory>src/main/resources/pcf</directory>
+					</resource>
+				</resources>
+				<finalName>${project.artifactId}-pcf-${project.version}</finalName>
+			</build>
+		</profile>
+	</profiles>
+
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<!--add build information to the actuator /info endpoint-->
+							<goal>build-info</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<!--add git information to the actuator /info endpoint-->
+				<groupId>pl.project13.maven</groupId>
+				<artifactId>git-commit-id-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+				<!-- configure unit-test -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${maven-surefire-plugin.version}</version>
+				<!-- surefire will default execute anything class name like *Test.java -->
+			</plugin>
+
+			<plugin>
+				<!-- configure integration test -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>${maven-failsafe-plugin.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+				<!-- failsafe will default execute anything class name like *Test.java and *IT.java -->
 			</plugin>
 		</plugins>
 	</build>

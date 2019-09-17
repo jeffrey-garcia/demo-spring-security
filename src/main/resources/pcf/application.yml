@@ -1,0 +1,22 @@
+# Custom configuration for CSRF cookie root domain
+# since we have lots of microservices sharing the sub-domain
+# defining the CSRF cookie with root domain ensure it could shared with all the sub-domain
+csrf:
+  cookie:
+    root:
+      domain: pcf.manulife.com
+
+# Custom configuration for redirecting after login complete, for example redirect back to Angular website
+login:
+  complete:
+    redirect:
+      url: https://demo-angular-app.apps.sea.preview.pcf.manulife.com
+  session:
+    cookie:
+      timeout: 60
+
+# Custom configuration for configuring list of CORS allowed origins
+# for example, add the Angular website domain to allow cross-origin-request via ajax
+cors:
+  allowed:
+    origins: https://demo-angular-app.apps.sea.preview.pcf.manulife.com
