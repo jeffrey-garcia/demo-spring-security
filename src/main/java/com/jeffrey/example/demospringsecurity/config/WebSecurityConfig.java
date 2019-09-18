@@ -43,11 +43,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
             .authorizeRequests()
                 .antMatchers(
+                        // declare the public endpoint before the private if the private domains is a superset of the public
+                        "/actuator*/**"
+                ).permitAll()
+                .antMatchers(
                         "/**"
                 ).access("@authorizationHandler.hasAccess(authentication)")
-                .antMatchers(
-                        "/actuator/**"
-                ).permitAll()
                 .anyRequest().authenticated()
         .and()
             .formLogin() // auto redirect default spring login page and won't return 401/403
@@ -68,7 +69,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .and()
             .csrf()
                 // disable csrf for actuator's endpoint (POST/PUT/DELETE) otherwise they will be blocked
-                .ignoringAntMatchers("/login", "/actuator/**")
+                .ignoringAntMatchers("/login", "/actuator*/**")
                 .csrfTokenRepository(csrfTokenRepository) // defines a repository where tokens are stored
                 .and()
                 .addFilterAfter(csrfFilter, CsrfFilter.class); // CSRF filter to add the cookie
