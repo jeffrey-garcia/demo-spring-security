@@ -1,0 +1,11 @@
+---
+spring:
+  profiles: app1
+server:
+  port: 8081
+
+---
+spring:
+  profiles: app2
+server:
+  port: 8082

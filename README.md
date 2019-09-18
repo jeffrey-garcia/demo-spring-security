@@ -245,6 +245,14 @@ CSRF token exist.
     ```sh
     ./mvnw clean spring-boot:run
     ```
+
+#### Running app standalone locally with multiple instances
+- Maven Wrapper 
+    ```sh
+    ./mvnw clean spring-boot:run -Dspring-boot.run.profiles=local,app1
+    ./mvnw clean spring-boot:run -Dspring-boot.run.profiles=local,app2
+    ```
+
 <br/>
 
 ### <a name="Debug-Locally"></a> Debugging Spring-Session Locally
