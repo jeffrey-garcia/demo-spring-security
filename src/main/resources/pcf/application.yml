@@ -13,7 +13,8 @@ login:
       url: https://demo-angular-app.apps.sea.preview.pcf.manulife.com
   session:
     cookie:
-      timeout: 60
+      timeoutInSec: 60
+      name: DEMO-JSESSIONID
 
 # Custom configuration for configuring list of CORS allowed origins
 # for example, add the Angular website domain to allow cross-origin-request via ajax

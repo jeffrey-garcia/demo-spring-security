@@ -19,8 +19,11 @@ public class SecurityProperties {
     @Value("${login.complete.redirect.url}")
     public String loginCompleteRedirectUrl;
 
-    @Value("${login.session.cookie.timeout}")
-    public int loginSessionCookieTimeout;
+    @Value("${login.session.cookie.timeoutInSec}")
+    public int loginSessionCookieTimeoutInSec;
+
+    @Value("${login.session.cookie.name}")
+    public String loginSessionCookieName;
 
     @Bean
     @Qualifier("webSecurityProperties")

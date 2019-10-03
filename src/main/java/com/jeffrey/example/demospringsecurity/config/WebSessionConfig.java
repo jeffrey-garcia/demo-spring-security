@@ -32,7 +32,10 @@ public class WebSessionConfig {
         serializer.setSameSite("");
 
         // configure the session cookie timeout in seconds
-        serializer.setCookieMaxAge(securityProperties.loginSessionCookieTimeout);
+        serializer.setCookieMaxAge(securityProperties.loginSessionCookieTimeoutInSec);
+
+        // configure the session cookie name
+        serializer.setCookieName(securityProperties.loginSessionCookieName);
 
         // all other settings remain as default
 
