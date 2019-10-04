@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class WebMvcConfig implements WebMvcConfigurer {
+public class CorsConfig implements WebMvcConfigurer {
     //Enabling CORS for the whole application
 
     @Autowired
@@ -28,7 +28,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         HttpMethod.DELETE.name())
                 .allowCredentials(true)
                 .allowedHeaders(
-                        CSRF.HEADER_NAME.toString(),
+                        CsrfConfig.HEADER_NAME.toString(),
                         "Content-Type")
                 .maxAge(3600);
     }

@@ -25,6 +25,10 @@ import java.util.UUID;
 public class CsrfConfig {
     private Logger LOGGER = LoggerFactory.getLogger(CsrfConfig.class);
 
+    public static final String COOKIE_NAME = "XSRF-TOKEN";
+    public static final String HEADER_NAME = "X-XSRF-TOKEN";
+    public static final String PARAM_NAME = "_csrf";
+
     @Autowired
     @Qualifier("webSecurityProperties")
     SecurityProperties securityProperties;
@@ -47,8 +51,8 @@ public class CsrfConfig {
             public CsrfToken generateToken(HttpServletRequest httpServletRequest) {
                 // Apply custom token generation logic here
                 CsrfToken csrfToken = new DefaultCsrfToken(
-                        CSRF.HEADER_NAME.toString(),
-                        CSRF.PARAM_NAME.toString(),
+                        HEADER_NAME,
+                        PARAM_NAME,
                         UUID.randomUUID().toString());
 
                 LOGGER.debug("generate csrf token url: {}, method: {}", httpServletRequest.getRequestURI(), httpServletRequest.getMethod());
@@ -63,7 +67,7 @@ public class CsrfConfig {
                 LOGGER.debug("save csrf token url: {}, method: {}", httpServletRequest.getRequestURI(), httpServletRequest.getMethod());
                 LOGGER.debug("save csrf token: {}", csrfToken==null? "":csrfToken.getToken());
 
-                Cookie csrfCookie = new Cookie(CSRF.COOKIE_NAME.toString(), csrfToken==null? "":csrfToken.getToken());
+                Cookie csrfCookie = new Cookie(COOKIE_NAME.toString(), csrfToken==null? "":csrfToken.getToken());
 
                 // assign the cookie domain
                 csrfCookie.setDomain(securityProperties.csrfCookiesRootDomain);
@@ -110,3 +114,5 @@ public class CsrfConfig {
     }
 
 }
+
+

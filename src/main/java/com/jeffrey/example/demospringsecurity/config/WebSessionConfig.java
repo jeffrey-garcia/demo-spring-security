@@ -4,13 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.session.FindByIndexNameSessionRepository;
+import org.springframework.session.Session;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
+import org.springframework.session.security.SpringSessionBackedSessionRegistry;
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
 
 @EnableRedisHttpSession
 @Configuration
-public class WebSessionConfig {
+public class WebSessionConfig<S extends Session> {
 
     @Autowired
     @Qualifier("webSecurityProperties")
@@ -46,6 +49,14 @@ public class WebSessionConfig {
         // all other settings remain as default
 
         return serializer;
+    }
+
+    @Bean
+    @Qualifier("sessionRegistry")
+    public SpringSessionBackedSessionRegistry<S> sessionRegistry(
+            @Autowired FindByIndexNameSessionRepository<S> sessionRepository
+    ) {
+        return new SpringSessionBackedSessionRegistry<>(sessionRepository);
     }
 
 }
