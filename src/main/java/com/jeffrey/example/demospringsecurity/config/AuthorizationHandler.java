@@ -10,13 +10,13 @@ import org.springframework.stereotype.Component;
 public class AuthorizationHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizationHandler.class);
 
-    private volatile boolean disableAllAccess = false;
+    protected volatile boolean disableAllAccess = false;
 
     public boolean hasAccess(Authentication authentication) {
         boolean isAnonymous = (authentication instanceof AnonymousAuthenticationToken);
         LOGGER.debug("has user authenticated? :{}", !isAnonymous);
         LOGGER.debug("all access disabled? :{}", disableAllAccess);
-        return (!isAnonymous && !disableAllAccess);
+        return (!isAnonymous && authentication.isAuthenticated() && !disableAllAccess);
     }
 
     public void disableAllAccess() {
