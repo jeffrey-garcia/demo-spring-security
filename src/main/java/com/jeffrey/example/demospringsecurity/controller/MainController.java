@@ -8,7 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @RestController
@@ -22,7 +25,7 @@ public class MainController {
      * curl "http://localhost:8080/customers" -i -X GET
      */
     @GetMapping(path="/customers")
-    public @ResponseBody Iterable<Customer> getAllCustomers() {
+    public @ResponseBody Iterable<Customer> getAllCustomers(HttpSession session) {
         LOGGER.debug("getAllCustomers");
         return customerService.getAllCustomers();
     }

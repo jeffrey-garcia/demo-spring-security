@@ -15,8 +15,10 @@ login:
       url: http://localhost:4200
   session:
     cookie:
-      timeoutInSec: 60
+      timeoutInSec: 900 # 15 mins
       name: DEMO-JSESSIONID
+      secure: false
+    maxConcurrentSessionsPerUser: 1
 
 # Custom configuration for configuring list of CORS allowed origins
 # for example, add the Angular website domain to allow cross-origin-request via ajax

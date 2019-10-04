@@ -37,6 +37,12 @@ public class WebSessionConfig {
         // configure the session cookie name
         serializer.setCookieName(securityProperties.loginSessionCookieName);
 
+        // configure whether the session cookie will be transmitted only under https
+        serializer.setUseSecureCookie(securityProperties.useSecureCookie);
+
+        // session cookie must be http only and remains inaccessible by javascript to prevent XSS attack
+        serializer.setUseHttpOnlyCookie(true);
+
         // all other settings remain as default
 
         return serializer;

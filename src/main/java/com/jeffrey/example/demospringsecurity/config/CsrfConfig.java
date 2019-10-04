@@ -45,16 +45,14 @@ public class CsrfConfig {
 
             @Override
             public CsrfToken generateToken(HttpServletRequest httpServletRequest) {
-                // CsrfToken csrfToken = repository.generateToken(httpServletRequest);
-
                 // Apply custom token generation logic here
                 CsrfToken csrfToken = new DefaultCsrfToken(
                         CSRF.HEADER_NAME.toString(),
                         CSRF.PARAM_NAME.toString(),
                         UUID.randomUUID().toString());
 
-                LOGGER.debug("generate token url: {}, method: {}", httpServletRequest.getRequestURI(), httpServletRequest.getMethod());
-                LOGGER.debug("generate token: {}", csrfToken.getToken());
+                LOGGER.debug("generate csrf token url: {}, method: {}", httpServletRequest.getRequestURI(), httpServletRequest.getMethod());
+                LOGGER.debug("generate csrf token: {}", csrfToken.getToken());
                 return csrfToken;
             }
 
@@ -62,36 +60,36 @@ public class CsrfConfig {
             public void saveToken(CsrfToken csrfToken, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
                 if (csrfToken == null) return;
 
-                LOGGER.debug("save token url: {}, method: {}", httpServletRequest.getRequestURI(), httpServletRequest.getMethod());
-                LOGGER.debug("save token: {}", csrfToken==null? "":csrfToken.getToken());
+                LOGGER.debug("save csrf token url: {}, method: {}", httpServletRequest.getRequestURI(), httpServletRequest.getMethod());
+                LOGGER.debug("save csrf token: {}", csrfToken==null? "":csrfToken.getToken());
 
-                Cookie cookie = new Cookie(CSRF.COOKIE_NAME.toString(), csrfToken==null? "":csrfToken.getToken());
+                Cookie csrfCookie = new Cookie(CSRF.COOKIE_NAME.toString(), csrfToken==null? "":csrfToken.getToken());
 
                 // assign the cookie domain
-                cookie.setDomain(securityProperties.csrfCookiesRootDomain);
+                csrfCookie.setDomain(securityProperties.csrfCookiesRootDomain);
                 if (!"localhost".equalsIgnoreCase(securityProperties.csrfCookiesRootDomain))
                 {
-                    cookie.setSecure(true);
+                    csrfCookie.setSecure(true);
                 }
 
                 if (!StringUtils.isEmpty(repository.getCookiePath())) {
-                    cookie.setPath(repository.getCookiePath());
+                    csrfCookie.setPath(repository.getCookiePath());
                 } else {
                     String contextPath = httpServletRequest.getContextPath();
-                    cookie.setPath(contextPath.length() > 0 ? contextPath:"/");
+                    csrfCookie.setPath(contextPath.length() > 0 ? contextPath:"/");
                 }
 
-                cookie.setHttpOnly(false);
+                csrfCookie.setHttpOnly(false);
 
-                httpServletResponse.addCookie(cookie);
+                httpServletResponse.addCookie(csrfCookie);
                 repository.saveToken(csrfToken, httpServletRequest, httpServletResponse);
             }
 
             @Override
             public CsrfToken loadToken(HttpServletRequest httpServletRequest) {
                 CsrfToken csrfToken = repository.loadToken(httpServletRequest);
-                LOGGER.debug("load token url: {}, method: {}", httpServletRequest.getRequestURI(), httpServletRequest.getMethod());
-                LOGGER.debug("load token: {}", csrfToken==null? null:csrfToken.getToken());
+                LOGGER.debug("load csrf token url: {}, method: {}", httpServletRequest.getRequestURI(), httpServletRequest.getMethod());
+                LOGGER.debug("load csrf token: {}", csrfToken==null? null:csrfToken.getToken());
                 return csrfToken;
             }
         };
@@ -105,29 +103,7 @@ public class CsrfConfig {
             protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
                 CsrfToken csrfToken = (CsrfToken) httpServletRequest.getAttribute(CsrfToken.class.getName());
                 LOGGER.debug("doFilterInternal url: {}, method: {}", httpServletRequest.getRequestURI(), httpServletRequest.getMethod());
-                LOGGER.debug("doFilterInternal token: {}", csrfToken==null? null:csrfToken.getToken());
-
-//                if (csrfToken != null) {
-//                    Cookie cookie = WebUtils.getCookie(httpServletRequest, CSRF.COOKIE_NAME.toString());
-//                    String token = csrfToken.getToken();
-//
-//                    if (cookie == null || token != null && !token.equals(cookie.getValue())) {
-//                        cookie = new Cookie(CSRF.COOKIE_NAME.toString(), token);
-//
-//                        // assign the cookie domain
-//                        cookie.setDomain(securityProperties.csrfCookiesRootDomain);
-//                        if (!"localhost".equalsIgnoreCase(securityProperties.csrfCookiesRootDomain))
-//                        {
-//                            cookie.setSecure(true);
-//                        }
-//
-//                        cookie.setPath("/");
-//                        cookie.setHttpOnly(false);
-//
-//                        httpServletResponse.addCookie(cookie);
-//                    }
-//                }
-
+                LOGGER.debug("doFilterInternal csrf token: {}", csrfToken==null? null:csrfToken.getToken());
                 filterChain.doFilter(httpServletRequest, httpServletResponse);
             }
         };

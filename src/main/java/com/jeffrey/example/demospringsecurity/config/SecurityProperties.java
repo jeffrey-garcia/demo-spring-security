@@ -25,6 +25,12 @@ public class SecurityProperties {
     @Value("${login.session.cookie.name}")
     public String loginSessionCookieName;
 
+    @Value("${login.session.cookie.secure}")
+    public boolean useSecureCookie;
+
+    @Value("${login.session.maxConcurrentSessionsPerUser}")
+    public int maxConcurrentSessionsPerUser;
+
     @Bean
     @Qualifier("webSecurityProperties")
     SecurityProperties webSecurityProperties() {
