@@ -4,15 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.DefaultRedirectStrategy;
@@ -116,33 +113,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public UserDetailsService userDetailsService() {
         return this.userDetailsService;
-    }
-
-    @Bean
-    @Qualifier("authorizationHandler")
-    public AuthorizationHandler authorizationHandler() {
-        return new AuthorizationHandler() {
-            private volatile boolean disableAllAccess = false;
-
-            @Override
-            public boolean hasAccess(Authentication authentication) {
-                boolean isAnonymous = (authentication instanceof AnonymousAuthenticationToken);
-                LOGGER.debug("has user authenticated? :{}", !isAnonymous);
-                LOGGER.debug("all access disabled? :{}", disableAllAccess);
-                return (!isAnonymous && !disableAllAccess);
-            }
-
-            @Override
-            public void disableAllAccess() {
-                LOGGER.debug("Disabling all controllers access...");
-                disableAllAccess = true;
-            }
-        };
-    }
-
-    interface AuthorizationHandler {
-        boolean hasAccess(Authentication authentication);
-        void disableAllAccess();
     }
 
 }
