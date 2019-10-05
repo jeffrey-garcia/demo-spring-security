@@ -1,67 +1,78 @@
 package com.jeffrey.example.demospringsecurity.config;
 
-import com.google.common.collect.Lists;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class AuthorizationHandlerTests {
 
-    AnonymousAuthenticationToken anonymous = new AnonymousAuthenticationToken(
-            "key",
-            "principal",
-            Lists.newArrayList(new SimpleGrantedAuthority("role")));
+    @Mock
+    AnonymousAuthenticationToken anonymous;
 
-    UsernamePasswordAuthenticationToken user = new UsernamePasswordAuthenticationToken(
-            "principal",
-            "credential",
-            Lists.newArrayList(new SimpleGrantedAuthority("role")));
+    @Mock
+    UsernamePasswordAuthenticationToken user;
 
-    AuthorizationHandler authorizationHandler = new AuthorizationHandler();
+    @InjectMocks
+    AuthorizationHandler authorizationHandler;
 
     @Before
-    public void setup() { }
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+    }
 
     @Test
-    public void verifyAccess_Anonymous() {
+    public void verifyAllAccess_Anonymous() {
+        when(anonymous.isAuthenticated()).thenReturn(true);
         Assert.assertFalse(authorizationHandler.hasAccess(anonymous));
+        verify(anonymous, times(1)).isAuthenticated();
     }
 
     @Test
     public void verifyDisableAllAccess_Anonymous() {
+        when(anonymous.isAuthenticated()).thenReturn(true);
         authorizationHandler.disableAllAccess();
         Assert.assertFalse(authorizationHandler.hasAccess(anonymous));
+        verify(anonymous, times(1)).isAuthenticated();
     }
 
     @Test
     public void verifyAllAccess_User_NotLogin() {
-        user.setAuthenticated(false);
+        when(user.isAuthenticated()).thenReturn(false);
         Assert.assertFalse(authorizationHandler.hasAccess(user));
+        verify(user, times(1)).isAuthenticated();
     }
 
     @Test
     public void verifyAllAccess_User_Login() {
+        when(user.isAuthenticated()).thenReturn(true);
         Assert.assertTrue(authorizationHandler.hasAccess(user));
+        verify(user, times(1)).isAuthenticated();
     }
 
     @Test
     public void verifyDisableAllAccess_User_NotLogin() {
-        user.setAuthenticated(false);
+        when(user.isAuthenticated()).thenReturn(false);
         authorizationHandler.disableAllAccess();
         Assert.assertFalse(authorizationHandler.hasAccess(user));
+        verify(user, times(1)).isAuthenticated();
     }
 
     @Test
     public void verifyDisableAllAccess_User_Login() {
-        user.setAuthenticated(false);
+        when(user.isAuthenticated()).thenReturn(true);
         authorizationHandler.disableAllAccess();
         Assert.assertFalse(authorizationHandler.hasAccess(user));
+        verify(user, times(1)).isAuthenticated();
     }
 
 }

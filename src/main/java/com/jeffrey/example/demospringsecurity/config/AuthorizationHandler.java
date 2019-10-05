@@ -14,9 +14,11 @@ public class AuthorizationHandler {
 
     public boolean hasAccess(Authentication authentication) {
         boolean isAnonymous = (authentication instanceof AnonymousAuthenticationToken);
-        LOGGER.debug("has user authenticated? :{}", !isAnonymous);
+        boolean isAuthenticated = authentication.isAuthenticated();
+        LOGGER.debug("is anonymous? :{}", isAnonymous);
+        LOGGER.debug("has user authenticated? :{}", !isAuthenticated);
         LOGGER.debug("all access disabled? :{}", disableAllAccess);
-        return (!isAnonymous && authentication.isAuthenticated() && !disableAllAccess);
+        return (!isAnonymous && isAuthenticated && !disableAllAccess);
     }
 
     public void disableAllAccess() {
