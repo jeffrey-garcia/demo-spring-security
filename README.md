@@ -3,7 +3,7 @@
 A demo project for CORS negotiation and CSRF protection using Spring Boot Security.
 
 <b>Table of Contents:</b>
-- [Common misconceptions](#Common-Misconceptions)
+- [Common Misconceptions](#Common-Misconceptions)
 - [Solution](#Solution)
 - [Build, Run, Test](#Build-Run-Test)
 - [Debug-Locally](#Debug-Locally)
@@ -11,7 +11,7 @@ A demo project for CORS negotiation and CSRF protection using Spring Boot Securi
 
 <br/>
 
-### <a name="Common-Misconceptions"></a> Common misconceptions
+### <a name="Common-Misconceptions"></a> Common Misconceptions
 
 #### Why do we need CSRF when we have SOP?
 ##### Same Origin Policy
@@ -113,7 +113,7 @@ This means that any JavaScript running on your site will have access to web
 storage, and because of this can be vulnerable to cross-site scripting (XSS) 
 attacks. 
 
-##### Secutiry Threat
+##### Security Threat
 - any authentication your app requires can be bypassed by a user with local 
 privileges to the machine on which the data is stored. Therefore, it's 
 recommended not to store any sensitive information in local storage.
@@ -183,15 +183,16 @@ the browser's console for details.
 
 ### <a name="Solution"></a> Solution
 - Rely on SOP to provide the default cross-origin access policy in browser
-- Enable CORS to enforce cross-origins read/write/form-post only for allowed domain
+- Harden CORS policy to relax cross-origins read/write/form-post only for allowed domain(s)
 - Enable CSRF token for root/sub-domains 
-- Enable login session using spring-session and Redis to facilitate horizontal scaling
-  (by default the CSRF token is stored inside the HTTP session, and the
-  HTTP session is replicated over all the backend instances)
+- Enable login session cookies using spring-session and Redis to facilitate horizontal scaling
+  (by default the CSRF token is stored inside the HTTP session, and the HTTP session is 
+  replicated over the cluster)
+- Prevent Session-Fixation-Attack using `migrateSession` strategy
 
 <br/>
 
-#### Exepcted Behavior
+#### Expected Behavior
 The following tables illustrate the comparison matrix for various combination of protection technique.
 
 ##### HTTP GET
@@ -287,3 +288,6 @@ redis-cli keys '*' | xargs redis-cli del
 - [CORS support in Spring Framework](https://spring.io/blog/2015/06/08/cors-support-in-spring-framework)
 - [Spring Security and Angular](https://spring.io/guides/tutorials/spring-security-and-angular-js/)
 - [Spring Session](https://docs.spring.io/spring-session/docs/current/reference/html5/guides/boot-redis.html)
+- [Spring Redis Session](https://docs.spring.io/spring-session/docs/current/reference/html5/guides/boot-redis.html)
+- [Session Fixation Attack](https://www.vojtechruzicka.com/session-fixation-attack/)
+- [Session Fixation Attack Protection](https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#ns-session-fixation)

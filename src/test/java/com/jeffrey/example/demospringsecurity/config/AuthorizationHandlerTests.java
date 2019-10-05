@@ -7,13 +7,13 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 public class AuthorizationHandlerTests {
 
     @Mock
@@ -27,7 +27,7 @@ public class AuthorizationHandlerTests {
 
     @Before
     public void setup() {
-        MockitoAnnotations.initMocks(this);
+//        MockitoAnnotations.initMocks(this);
     }
 
     @Test
