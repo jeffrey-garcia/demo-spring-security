@@ -250,8 +250,9 @@ CSRF token exist.
 #### Running app standalone locally with multiple instances
 - Maven Wrapper 
     ```sh
-    ./mvnw clean spring-boot:run -Dspring-boot.run.profiles=local,app1
-    ./mvnw clean spring-boot:run -Dspring-boot.run.profiles=local,app2
+    ./mvnw clean
+    ./mvnw spring-boot:run -Dspring-boot.run.profiles=local,app1
+    ./mvnw spring-boot:run -Dspring-boot.run.profiles=local,app2
     ```
 
 <br/>
