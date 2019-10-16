@@ -12,8 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.DefaultRedirectStrategy;
-import org.springframework.security.web.RedirectStrategy;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.session.security.SpringSessionBackedSessionRegistry;
@@ -49,6 +48,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     AuthenticationProvider authenticationProvider;
 
     @Autowired
+    @Qualifier("authenticationSuccessHandler")
+    AuthenticationSuccessHandler authenticationSuccessHandler;
+
+    @Autowired
     @Qualifier("userDetailsService")
     UserDetailsService userDetailsService;
 
@@ -68,14 +71,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
             .formLogin() // auto redirect default spring login page and won't return 401/403
                 .permitAll()
-                .successHandler((httpServletRequest, httpServletResponse, authentication) -> {
-                    RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
-                    redirectStrategy.sendRedirect(
-                        httpServletRequest,
-                        httpServletResponse,
-                        securityProperties.loginCompleteRedirectUrl
-                    );
-                });
+                .successHandler(authenticationSuccessHandler);
 
         http
             .logout()
@@ -97,7 +93,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
             // define HTTP session related functionality
             .sessionManagement()
-            // session-fixation protection attack protection
+            // session-fixation attack protection
             // create a new session and copy all existing session attributes to the new session upon re-authentication
             .sessionFixation().migrateSession()
             // restrictions on how many sessions an authenticated user may have open concurrently
@@ -114,5 +110,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public UserDetailsService userDetailsService() {
         return this.userDetailsService;
     }
-
 }
