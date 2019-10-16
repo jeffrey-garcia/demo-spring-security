@@ -15,7 +15,7 @@ login:
       url: http://localhost:4200
   session:
     cookie:
-      timeoutInSec: 900 # 15 mins
+      timeoutInSec: -1 # 900=15mins, -1=session
       name: DEMO-JSESSIONID
       secure: false
     maxConcurrentSessionsPerUser: 1

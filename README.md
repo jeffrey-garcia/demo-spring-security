@@ -165,6 +165,13 @@ Having said that, the CSRF token itself is vulnerable to XSS attack again, the C
 itself can be exploit so the attacker can still initiate a CSRF attack if the web app 
 itself is not completely sealed away from XSS vulnerabilities.
 
+Recall that cross-site scripting (XSS) is a type of vulnerability, where malicious
+javascript code can be executed in the victim's browser. This can be combined with
+various other vulnerabilities to perform an attack, and javascript can still manipulate
+the cookies. Further restriction can be set to the cookies so it's accessible only from
+pages served under the same domain of the server, however, in XSS the malicious javascript
+is actually served from the same domain and the safeguard is bypassed.
+
 This is a chicken-and-egg problem here. A way to mitigate this problem is to set the CSRF 
 token to a `digest` of your backend authentication cookie with a salt for added security.
 
