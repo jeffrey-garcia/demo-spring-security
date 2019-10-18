@@ -277,6 +277,13 @@ Once completed, launch it with default settings.
 redis-server
 ``` 
 
+On Windows:
+Download the latest version of Redis in [HERE](https://github.com/microsoftarchive/redis/releases).
+1. Download the preferred Redis version in ZIP format
+2. Extract the zip to a specific path
+3. Run the redis server `redis-server.exe`
+4. Open another shell window and run `redis-cli.exe` and start using redis command-line
+
 <br/>
 
 #### Remove all sessions by using redis-cli
